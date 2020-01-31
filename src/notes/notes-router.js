@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const { requireAuth } = require("../middleware/jwt-auth");
 const NotesService = require("./notes-service");
 
 const notesRouter = express.Router();
@@ -10,7 +11,9 @@ const serializeNote = note => ({
   title: note.title,
   category_id: note.category_id,
   whereat: note.whereat,
-  comments: note.comments
+  comments: note.comments,
+  user_id: note.user_id,
+  suggesting_user_id: note.suggesting_user_id
 });
 
 notesRouter
@@ -24,12 +27,33 @@ notesRouter
       .catch(next);
   })
 
-  .post(jsonParser, (req, res, next) => {
-    const { title, category_id, whereat, comments } = req.body;
-    const newNote = { title, category_id, whereat, comments };
+  .post(jsonParser, requireAuth, (req, res, next) => {
+    const {
+      title,
+      category_id,
+      whereat,
+      comments,
+      user_id,
+      suggesting_user_id
+    } = req.body;
+
+    if (
+      req.user.user_id !== user_id &&
+      req.user.user_id !== suggesting_user_id
+    ) {
+      return res.status(401);
+    }
+    const newNote = {
+      title,
+      category_id,
+      whereat,
+      comments,
+      user_id,
+      suggesting_user_id
+    };
 
     for (const [key, value] of Object.entries(newNote))
-      if (value == null)
+      if (value == null && key !== "suggesting_user_id")
         return res.status(400).json({
           error: { message: `Missing ${key} in request body` }
         });
@@ -67,32 +91,29 @@ notesRouter
         res.status(204).end();
       })
       .catch(next);
-  })
-
-  .patch(jsonParser, (req, res, next) => {
-    const { title, category_id, whereat, comments } = req.body;
-    const noteToUpdate = {
-      title: title,
-      category_id: category_id,
-      whereat: whereat,
-      comments: comments
-    };
-    const numberofValues = Object.values(noteToUpdate).filter(Boolean).length;
-
-    if (numberofValues === 0) {
-      return res.status(400).json({
-        error: {
-          message: `request body must contain either 'title', 'category', 'where', or 'comments'`
-        }
-      });
-    }
-    updatedNote.modified = new Date();
-
-    NotesService.updateNote(req.app.get("db"), req.params.title, noteToUpdate)
-      .then(numRowsAffected => {
-        res.status(204).end();
-      })
-      .catch(next);
   });
+
+//   .patch(jsonParser, (req, res, next) => {
+//     const knexInstance = req.app.get("db");
+//     const { title, category_id, whereat, comments } = req.body;
+//     const noteToUpdate = req.params.note_id;
+//     const { }
+//     const updatedNote = { }
+//     const numberofValues = Object.values(noteToUpdate).filter(Boolean).length;
+
+//     if (numberofValues === 0) {
+//       return res.status(400).json({
+//         error: {
+//           message: `request body must contain either 'title', 'category', 'where', or 'comments'`
+//         }
+//       });
+//     }
+
+//     NotesService.updateNote(req.app.get("db"), req.params.title, noteToUpdate)
+//       .then(numRowsAffected => {
+//         res.status(204).end();
+//       })
+//       .catch(next);
+//   });
 
 module.exports = notesRouter;

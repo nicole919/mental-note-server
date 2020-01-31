@@ -27,7 +27,7 @@ categoriesRouter
     const { category_name } = req.body;
     const newCategory = { category_name };
 
-    for (const [key, value] of Object.entries(newCategorie))
+    for (const [key, value] of Object.entries(newCategory))
       if (value == null)
         return res.status(400).json({
           error: { message: ` missing ${key} in request body` }
@@ -45,7 +45,8 @@ categoriesRouter
       .catch(next);
   });
 
-CategoriesRouter.route("/:category_id")
+categoriesRouter
+  .route("/:category_id")
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     const category_id = req.params.category_id;
@@ -97,4 +98,4 @@ CategoriesRouter.route("/:category_id")
       })
       .catch(next);
   });
-module.exports = CategoriesRouter;
+module.exports = categoriesRouter;

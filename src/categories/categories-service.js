@@ -1,6 +1,6 @@
 const CategoriesService = {
   getAllCategories(knex) {
-    return knex.select("*").from("folders");
+    return knex.select("*").from("categories");
   },
 
   postCategory(knex, newCategory) {

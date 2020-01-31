@@ -1,12 +1,12 @@
-const express = require("express");
-const app = express();
+const app = require("./app");
+const knex = require("knex");
+const { PORT, DATABASE_URL } = require("./config");
 
-const PORT = process.env.PORT || 3000;
-
-app.get("/api/*", (req, res) => {
-  res.json({ ok: true });
+const db = knex({
+  client: "pg",
+  connection: DATABASE_URL
 });
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+app.set("db", db);
 
-module.exports = { app };
+app.listen(PORT, () => console.log(`Listening on port balls ${PORT}`));
