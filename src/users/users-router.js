@@ -13,6 +13,13 @@ const serializeNote = note => ({
   whereat: note.whereat,
   comments: note.comments
 });
+usersRouter.get("/:user_id", (req, res, next) => {
+  UsersService.getUser(req.app.get("db"), req.params.user_id)
+    .then(user => {
+      res.json(user[0]);
+    })
+    .catch(next);
+});
 
 usersRouter.get("/:user_id/notes", (req, res, next) => {
   UsersService.getNotesForUser(req.app.get("db"), req.params.user_id)
@@ -22,9 +29,9 @@ usersRouter.get("/:user_id/notes", (req, res, next) => {
     .catch(next);
 });
 
-usersRouter.post("/:user_id/notes", requireAuth, jsonBodyParser)
+usersRouter.post("/:user_id/notes", requireAuth, jsonBodyParser);
 
-usersRouter.post("/",jsonBodyParser, (req, res, next) => {
+usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   const { user_name, password, interests } = req.body;
 
   for (const field of ["interests", "user_name", "password"]) {

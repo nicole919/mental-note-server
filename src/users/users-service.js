@@ -11,6 +11,12 @@ const UsersService = {
       .where({ user_id });
   },
 
+  getUser(db, user_id) {
+    return db
+      .select("*")
+      .from("users")
+      .where({ id: user_id });
+  },
   hasUserWithUserName(db, user_name) {
     return db
       .from("users")

@@ -6,21 +6,13 @@ const NotesService = require("./notes-service");
 const notesRouter = express.Router();
 const jsonParser = express.json();
 
-const serializeNote = note => ({
-  note_id: note.note_id,
-  title: note.title,
-  category_id: note.category_id,
-  whereat: note.whereat,
-  comments: note.comments,
-  user_id: note.user_id,
-  suggesting_user_id: note.suggesting_user_id
-});
+const serializeNote = note => note;
 
 notesRouter
   .route("/")
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    NotesService.getAllNotes(knexInstance)
+    NotesService.getAllNotes(knexInstance, req.user.id)
       .then(notes => {
         res.json(notes.map(serializeNote));
       })
@@ -37,26 +29,35 @@ notesRouter
       suggesting_user_id
     } = req.body;
 
-    if (
-      req.user.user_id !== user_id &&
-      req.user.user_id !== suggesting_user_id
-    ) {
-      return res.status(401);
+    // not logged in at all return;
+    if (!req.user) {
+      return res.status(401).end();
     }
+
     const newNote = {
       title,
       category_id,
       whereat,
       comments,
-      user_id,
+      user_id:
+        req.user.id && !user_id && !suggesting_user_id ? req.user.id : user_id,
       suggesting_user_id
     };
 
-    for (const [key, value] of Object.entries(newNote))
-      if (value == null && key !== "suggesting_user_id")
+    console.log(
+      req.user.id && !user_id && !suggesting_user_id ? req.user.id : user_id
+    );
+    console.log(req.user);
+    console.log(newNote);
+
+    for (const [key, value] of Object.entries(newNote)) {
+      if (value == null && key !== "suggesting_user_id" && key !== "user_id") {
         return res.status(400).json({
           error: { message: `Missing ${key} in request body` }
         });
+      }
+    }
+
     NotesService.insertNote(req.app.get("db"), newNote)
       .then(note => {
         res
