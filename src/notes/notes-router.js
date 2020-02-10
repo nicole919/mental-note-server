@@ -12,11 +12,19 @@ notesRouter
   .route("/")
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    NotesService.getAllNotes(knexInstance, req.user.id)
-      .then(notes => {
-        res.json(notes.map(serializeNote));
-      })
-      .catch(next);
+    if (req.query.userOnly) {
+      NotesService.getUserNotes(knexInstance, req.user.id)
+        .then(notes => {
+          res.json(notes.map(serializeNote));
+        })
+        .catch(next);
+    } else {
+      NotesService.getAllNotesFeed(knexInstance)
+        .then(notes => {
+          res.json(notes.map(serializeNote));
+        })
+        .catch(next);
+    }
   })
 
   .post(jsonParser, requireAuth, (req, res, next) => {

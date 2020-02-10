@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const { requireAuth } = require("../middleware/jwt-auth");
 const UsersService = require("./users-service");
+const AuthService = require("../auth/auth-service");
 
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -62,10 +63,14 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 
         return UsersService.insertUser(req.app.get("db"), newUser).then(
           user => {
+            const sub = user.user_name;
+            const payload = { user_id: user.id };
+            const authToken = AuthService.createJwt(sub, payload);
+
             res
               .status(201)
               .location(path.posix.join(req.originalUrl, `${user.id}`))
-              .json(UsersService.serializeUser(user));
+              .json({ user: UsersService.serializeUser(user), authToken });
           }
         );
       });
