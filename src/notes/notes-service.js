@@ -26,6 +26,16 @@ const NotesService = {
       .where({ user_id: user_id });
   },
 
+  getUserNotesInCategory(knex, user_id, category_id) {
+    return knex
+
+      .select("*", "user.user_name AS user_name")
+      .from("notes")
+      .innerJoin("users AS user", "notes.user_id", "user.id")
+      .where({ user_id: user_id })
+      .andWhere({ category_id: category_id });
+  },
+
   getAllNotesFeed(knex) {
     return knex
       .join("categories", { "notes.category_id": "categories.category_id" })

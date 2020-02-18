@@ -13,12 +13,26 @@ notesRouter
   .get(requireAuth, (req, res, next) => {
     const knexInstance = req.app.get("db");
     if (req.query.userOnly) {
-      NotesService.getUserNotes(knexInstance, req.user.id)
-        .then(notes => {
-          res.json(notes.map(serializeNote));
-        })
-        .catch(next);
+      if (req.query.category_id) {
+        NotesService.getUserNotesInCategory(
+          knexInstance,
+          req.user.id,
+          req.query.category_id
+        )
+          .then(notes => {
+            res.json(notes.map(serializeNote));
+          })
+          .catch(next);
+      } else {
+        console.log("shdfsjdhfjskilodjf");
+        NotesService.getUserNotes(knexInstance, req.user.id)
+          .then(notes => {
+            res.json(notes.map(serializeNote));
+          })
+          .catch(next);
+      }
     } else {
+      console.log("shdfsjdhfjskilodjf");
       NotesService.getAllNotesFeed(knexInstance)
         .then(notes => {
           res.json(notes.map(serializeNote));
