@@ -1,26 +1,170 @@
-# Express Boilerplate!
+# Mental Note server
 
-This is a boilerplate project used for starting new projects!
+This is a server created with Node/Express to support the Mental Note app.
 
-## How do set up?
+# Getting Started
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+## Installing
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+Clone the repository and download the dependencies.
 
-## Scripts
+```
+$ git clone https://github.com/nicole919/mental-note-server.git
+$ cd mental-note-server
+$ npm install
+```
 
-Start the application `npm start`
+## Launching
 
-Start nodemon for the application `npm run dev`
+```
+$ npm start
+```
 
-Run the tests in watch mode `npm test`
+## Endpoints
 
-## Deploying
+`GET api/notes` - returns notes
 
-When your new project is ready for deployment, add a new heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+### Response
+
+```
+Status: 200 OK
+{
+       "note_id": 2,
+        "title": "pokemon",
+        "category_id": 1,
+        "whereat": "netflix",
+        "user_id": 2,
+        "suggesting_user_id": null,
+        "category_name": "Shows",
+        "id": null,
+        "user_name": "lily",
+        "password": null,
+        "interests": null,
+        "suggesting_user_name": null
+}
+```
+
+`GET /api/categories/` returns categories
+
+```
+{
+        "category_id": 4,
+        "category_name": "Books"
+}
+```
+
+### ---
+
+`POST /api/categories/` - create a new category
+
+```
+{
+        "category_name":"recipes"
+}
+```
+
+### Response
+
+```
+201 Created
+```
+
+```
+{
+        "category_id": 8,
+        "category_name": "recipes"
+}
+```
+
+### ---
+
+`POST /api/notes` - create a new note
+entry
+| Input | Type |
+| --------------- | ----------------------------------- |
+| title | string (required) |
+| category | integer reference(required) |
+| whereat | string |
+
+### Example
+
+```
+{
+     "title": "My Little Pony",
+     "category_id": 1,
+     "whereat": "netflix"
+}
+```
+
+### Response
+
+```
+201 Created
+```
+
+### ---
+
+`POST api/users/` - create a user
+
+### Example
+
+```
+{
+        "user_name":"katrina",
+        "password":"1234abcd",
+        "interests":"animal crossing, cookies"
+}
+```
+
+### Response
+
+```
+201 Created
+```
+
+```
+{
+     "user": {
+             "id": 9,
+             "user_name": "katrina",
+             "interests": "animal crossing, cookies"
+},
+     "authToken": "[]"
+}
+```
+
+### ---
+
+`GET api/notes/note_id` - returns a single note by ID
+
+### Example
+
+```
+GET api/note/3
+```
+
+### Response
+
+```
+{
+"note_id": 3,
+"title": "watchmen",
+"category_id": 1,
+"whereat": "hbo",
+"comments": "blue man",
+"user_id": 1,
+"suggesting_user_id": null
+}
+```
+
+`DELETE api/notes/note_id` - delete meal by ID
+
+### Response
+
+```
+204 No Content
+```
+
+[Mental Note live site](https://mental-note.nicole919.now.sh/)
+
+[Mental Note client-side repo](https://github.com/nicole919/mental-note)
