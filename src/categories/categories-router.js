@@ -71,7 +71,7 @@ categoriesRouter
     const knexInstance = req.app.get("db");
     const categoryToDelete = req.params.category_id;
 
-    CategoriesService.deleteCategory(knexInstance, CategoryToDelete)
+    CategoriesService.deleteCategory(knexInstance, categoryToDelete)
       .then(() => {
         res.status(204).end();
       })

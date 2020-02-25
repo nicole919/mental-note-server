@@ -116,27 +116,4 @@ notesRouter
       .catch(next);
   });
 
-//   .patch(jsonParser, (req, res, next) => {
-//     const knexInstance = req.app.get("db");
-//     const { title, category_id, whereat, comments } = req.body;
-//     const noteToUpdate = req.params.note_id;
-//     const { }
-//     const updatedNote = { }
-//     const numberofValues = Object.values(noteToUpdate).filter(Boolean).length;
-
-//     if (numberofValues === 0) {
-//       return res.status(400).json({
-//         error: {
-//           message: `request body must contain either 'title', 'category', 'where', or 'comments'`
-//         }
-//       });
-//     }
-
-//     NotesService.updateNote(req.app.get("db"), req.params.title, noteToUpdate)
-//       .then(numRowsAffected => {
-//         res.status(204).end();
-//       })
-//       .catch(next);
-//   });
-
 module.exports = notesRouter;
