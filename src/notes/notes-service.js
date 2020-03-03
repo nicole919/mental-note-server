@@ -53,6 +53,12 @@ const NotesService = {
       );
   },
   insertNote(knex, newNote) {
+    if (newNote.title.length > 25) {
+      throw new Error("title cannot exceed 25 characters");
+    }
+    if (newNote.whereat.length > 255) {
+      throw new Error("where cannot exceed 255 characters");
+    }
     return knex
       .insert(newNote)
       .into("notes")

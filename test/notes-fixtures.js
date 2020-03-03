@@ -18,6 +18,22 @@ function makeUsersArray() {
   ];
 }
 
+function makeCategoriesArray() {
+  return [
+    {
+      id: 1,
+      category_name: "test-category-1"
+    },
+    {
+      id: 2,
+      category_name: "test-category-2"
+    },
+    {
+      id: 3,
+      category_name: "test-category-3"
+    }
+  ];
+}
 function makeNotesArray(users) {
   return [
     {
@@ -45,5 +61,7 @@ function makeNotesArray(users) {
 }
 
 module.exports = {
-  makeNotesArray
+  makeNotesArray,
+  makeUsersArray,
+  makeCategoriesArray
 };

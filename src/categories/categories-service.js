@@ -4,6 +4,9 @@ const CategoriesService = {
   },
 
   postCategory(knex, newCategory) {
+    if (newCategory.category_name.length > 25) {
+      throw new Error("category name cannot exceed 25 characters");
+    }
     return knex
       .insert(newCategory)
       .into("categories")
